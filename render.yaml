@@ -1,0 +1,41 @@
+services:
+  # --- Main Talent Hub (Node / TanStack) ---
+  - type: web
+    name: packfora-talent-hub
+    runtime: node
+    plan: standard
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NITRO_PRESET
+        value: node-server
+
+      # Set ALL of the following in Render Dashboard → Environment.
+      # They must point at the SAME Supabase project that has the app's
+      # migrations applied and the admin user created.
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: VITE_SUPABASE_PROJECT_ID
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+
+  # --- Streamlit Analytics Dashboard ---
+  - type: web
+    name: packfora-analytics
+    runtime: python
+    plan: starter
+    rootDir: streamlit
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run app.py --server.port $PORT --server.headless true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
